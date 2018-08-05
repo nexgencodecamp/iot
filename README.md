@@ -1,7 +1,7 @@
 # iot
 Code examples and tutorials for the Nexgen IoT/Robotics Event in October
 
-##nodejs-sockets
+## nodejs-sockets
 This example enables you to communicate between 2 computers over Wifi. In the case of the tank,
 you may decide to communicate from a laptop to a raspberrypi in the tank. To run the example:
 
@@ -27,7 +27,7 @@ and click send. On the raspberrypi you should see printed out what you just type
 Taking this code, you can develop it further to create a webbased keyboard with a bit of HTML, some images,
 some CSS and a little bit more Javascript.
 
-##python-sockets
+## python-sockets
 Communicate over Wifi in Python!
 
 ### Setup

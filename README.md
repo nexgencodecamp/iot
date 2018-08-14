@@ -55,3 +55,44 @@ Look at the server terminal window. It should contain something like the followi
     Received "R"
     Received "D"
     Received "L"
+
+## SSH with Python
+Communicate by logging into your Raspberry Pi with SSH
+
+### Assumptions
+You have setup your Raspberry Pi with the Raspbian operating system in headless mode
+You have wired up the Raspberry Pi to an L298N Motor Driver
+
+### Referral Documents
+GPIO PWM For Raspberry Pi H-Bridge DC Motor Control
+https://www.bluetin.io/python/gpio-pwm-raspberry-pi-h-bridge-dc-motor-control/
+
+SCP examples
+https://gist.github.com/michaelminter/7377743
+
+Detecting Keyboard input in Python
+https://www.jonwitts.co.uk/archives/896
+
+### How to
+Copy the code `gpizero-test.py` to a Raspberry Pi
+
+To copy the file with SCP (secure copy) use the following command:
+
+    scp ./ssh-with-python/gpizero-test.py pi@192.168.0.x:~/some-folder
+
+You will need to change the IP address to that of your Raspberry Pi, plus make sure the folder names are correct on your local machine and the Pi.
+
+To run the code on your Raspberry Pi:
+
+ssh into your Raspberry Pi from your client machine (Windows or Mac)
+
+    ssh pi@192.168.0.14
+
+You will be prompted for your password.
+
+Navigate to the directory where the python file is located
+Start the code:
+
+    python gpizero-test.py
+
+Note that the L298N Motor Driver should be on. You should now be able to control the tank from your computer keyboard.

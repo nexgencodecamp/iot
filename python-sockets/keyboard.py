@@ -1,47 +1,50 @@
-import socket
+#!/usr/bin/python3
+
+# adapted from https://github.com/recantha/EduKit3-RC-Keyboard/blob/master/rc_keyboard.py
+
 import sys
-import curses
+import termios
+import tty
+import os
+import time
 
-# Get the curses window, turn off echoing of keyboard to screen, turn on
-# instant (no waiting) key response, and use special values for cursor keys
-screen = curses.initscr()
-curses.noecho()
-curses.cbreak()
-screen.keypad(True)
+def getch():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
 
-# Socket setup
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 10000)
-print('connecting to %s port %s' % server_address)
-sock.connect(server_address)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
-try:
-    while True:
-        char = screen.getch()
-        if char == ord('q'):
-            break
-        elif char == curses.KEY_UP:    
-            message = b'U'            
-            sock.sendall(message)
-        elif char == curses.KEY_DOWN:
-            message = b'D'
-            sock.sendall(message)
-        elif char == curses.KEY_RIGHT:
-            message = b'R'
-            sock.sendall(message)
-        elif char == curses.KEY_LEFT:
-            message = b'L'
-            sock.sendall(message)
-        elif char == 10:
-            sock.sendall('STOP')
 
-finally:
-    #Close down curses properly, inc turn echo back on!
-    curses.nocbreak()
-    screen.keypad(0)
-    curses.echo()
-    curses.endwin()
+button_delay = 0.2
 
-    print(sys.stderr, 'closing socket')
-    sock.shutdown(1)
-    sock.close()
+while True:
+    char = getch()
+
+    if (char == "p"):
+        print("Stop!")
+        exit(0)
+
+    if (char == "a"):
+        print("Left pressed")
+        time.sleep(button_delay)
+
+    elif (char == "d"):
+        print("Right pressed")
+        time.sleep(button_delay)
+
+    elif (char == "w"):
+        print("Up pressed")
+        time.sleep(button_delay)
+
+    elif (char == "s"):
+        print("Down pressed")
+        time.sleep(button_delay)
+
+    elif (char == "1"):
+        print("Number 1 pressed")
+        time.sleep(button_delay)

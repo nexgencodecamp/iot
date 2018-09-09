@@ -2,12 +2,12 @@
 
 """
 File: gpiozero-test.py
- 
+
 This code will test Raspberry Pi GPIO PWM on four GPIO
 pins. The code test ran with L298N H-Bridge driver module connected.
 
 Documentation: https://gpiozero.readthedocs.io/en/stable/api_output.html#pwmoutputdevice
- 
+
 """
 
 __author__ = "Pete Januarius"
@@ -22,7 +22,7 @@ import time
 from gpiozero import PWMOutputDevice
 from time import sleep
 
-#///////////////// Define Motor Driver GPIO Pins /////////////////
+# ///////////////// Define Motor Driver GPIO Pins /////////////////
 # Motor A, Left Side GPIO CONSTANTS
 PWM_FORWARD_LEFT_PIN = 26  # IN1 - Forward Drive
 PWM_REVERSE_LEFT_PIN = 19  # IN2 - Reverse Drive
@@ -41,6 +41,8 @@ reverseRight = PWMOutputDevice(PWM_REVERSE_RIGHT_PIN, True, 0, 1000)
 button_delay = 0.2
 
 # Handles keyboard input
+
+
 def getch():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -54,76 +56,81 @@ def getch():
 
 
 def allStop():
-	forwardLeft.value = 0
-	reverseLeft.value = 0
-	forwardRight.value = 0
-	reverseRight.value = 0
+    forwardLeft.value = 0
+    reverseLeft.value = 0
+    forwardRight.value = 0
+    reverseRight.value = 0
 
 
 def forwardDrive():
-	forwardLeft.value = 1.0
-	reverseLeft.value = 0
-	forwardRight.value = 1.0
-	reverseRight.value = 0
+    forwardLeft.value = 1.0
+    reverseLeft.value = 0
+    forwardRight.value = 1.0
+    reverseRight.value = 0
 
 
 def reverseDrive():
-	forwardLeft.value = 0
-	reverseLeft.value = 1.0
-	forwardRight.value = 0
-	reverseRight.value = 1.0
+    forwardLeft.value = 0
+    reverseLeft.value = 1.0
+    forwardRight.value = 0
+    reverseRight.value = 1.0
 
 
 def spinLeft():
-	forwardLeft.value = 0
-	reverseLeft.value = 1.0
-	forwardRight.value = 1.0
-	reverseRight.value = 0
+    forwardLeft.value = 0
+    reverseLeft.value = 1.0
+    forwardRight.value = 1.0
+    reverseRight.value = 0
 
 
-def SpinRight():
-	forwardLeft.value = 1.0
-	reverseLeft.value = 0
-	forwardRight.value = 0
-	reverseRight.value = 1.0
+def spinRight():
+    forwardLeft.value = 1.0
+    reverseLeft.value = 0
+    forwardRight.value = 0
+    reverseRight.value = 1.0
 
 
 def forwardTurnLeft():
-	forwardLeft.value = 0.2
-	reverseLeft.value = 0
-	forwardRight.value = 0.8
-	reverseRight.value = 0
+    forwardLeft.value = 0.2
+    reverseLeft.value = 0
+    forwardRight.value = 0.8
+    reverseRight.value = 0
 
 
 def forwardTurnRight():
-	forwardLeft.value = 0.8
-	reverseLeft.value = 0
-	forwardRight.value = 0.2
-	reverseRight.value = 0
+    forwardLeft.value = 0.8
+    reverseLeft.value = 0
+    forwardRight.value = 0.2
+    reverseRight.value = 0
 
 
 def reverseTurnLeft():
-	forwardLeft.value = 0
-	reverseLeft.value = 0.2
-	forwardRight.value = 0
-	reverseRight.value = 0.8
+    forwardLeft.value = 0
+    reverseLeft.value = 0.2
+    forwardRight.value = 0
+    reverseRight.value = 0.8
 
 
 def reverseTurnRight():
-	forwardLeft.value = 0
-	reverseLeft.value = 0.8
-	forwardRight.value = 0
-	reverseRight.value = 0.2
+    forwardLeft.value = 0
+    reverseLeft.value = 0.8
+    forwardRight.value = 0
+    reverseRight.value = 0.2
 
 
-def main():    
+def main():
     while True:
         char = getch()
+
+        # TODO - add a lastchar variable and check if char != lastchar
+
+        if (char == "q"):
+            break
 
         if (char == "p"):
             print("Stop!")
             allStop()
-						
+
         if (char == "a"):
             print("Left pressed")
             time.sleep(button_delay)
@@ -147,6 +154,24 @@ def main():
         elif (char == "1"):
             print("Number 1 pressed")
             time.sleep(button_delay)
+            reverseTurnLeft()
+
+        elif (char == "2"):
+            print("Number 2 pressed")
+            time.sleep(button_delay)
+            reverseTurnRight()
+
+        elif (char == "3"):
+            print("Number 3 pressed")
+            time.sleep(button_delay)
+            spinLeft()
+
+        elif (char == "4"):
+            print("Number 4 pressed")
+            time.sleep(button_delay)
+            spinRight()
+
+        sleep(0.05)
 
 
 if __name__ == "__main__":

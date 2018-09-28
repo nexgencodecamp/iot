@@ -20,12 +20,15 @@ CONTACT: techbitar at gmail dot com (techbitar.com)
   
 
   Useful Commands
+
+   *** NOTE: I have found that sometimes the below commands will not work without leaving off the ? ****
+   
    DESC                           Command               Respond                                           Param
    Test                             AT                    OK
    Reset                            AT+RESET              OK
    Get Firmware version             AT+VERSION?           +VERSION:hc01.comV2.1  (+VERSION:<Param> OK)
    Restore Default                  AT+ORGL               OK
-   Set/Check Module mode            AT+ROLE=0                                                             Param: 0- Slave 1-Master 2-Slave-Loop 
+   Set/Check Module mode            AT+ROLE?              0- Slave 1-Master 2-Slave-Loop 
    Get Module Address               AT+ADDR?              +ADDR:2017:10:95001, (+ADDR:<Param> OK)
     The module address comes up as the Bluetooth device on your machine. It may also change to: hc01.com HC-05 or something
   

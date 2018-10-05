@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
 SoftwareSerial btSerial(10, 11); // RX, TX
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 float degreesC;
 unsigned long timer = 0;
 

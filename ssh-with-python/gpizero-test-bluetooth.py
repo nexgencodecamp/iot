@@ -14,11 +14,13 @@ __author__ = "Pete Januarius"
 __version__ = "0.1.0"
 __license__ = "MIT"
 
+import serial
+import time
+import re
 import sys
 import termios
 import tty
 import os
-import time
 from gpiozero import PWMOutputDevice
 from time import sleep
 
@@ -40,9 +42,11 @@ reverseRight = PWMOutputDevice(PWM_REVERSE_RIGHT_PIN, True, 0, 1000)
 
 button_delay = 0.2
 
+# Raspberry Pi
+port = "/dev/rfcomm1"
+
+
 # Handles keyboard input
-
-
 def getch():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -119,6 +123,13 @@ def reverseTurnRight():
 
 
 def main():
+    print("Start")
+
+    # Start communications with the bluetooth unit
+    bluetooth = serial.Serial(port, 9600)
+    print("Connected")
+    bluetooth.flushInput()
+
     while True:
         char = getch()
 
@@ -171,7 +182,15 @@ def main():
             time.sleep(button_delay)
             spinRight()
 
+        # Read incoming bluetooth bytes
+        bytesToRead = bluetooth.inWaiting()
+        value = re.sub('[<>]', '', bluetooth.read(bytesToRead).decode())
+        print(value)
+
         sleep(0.25)
+
+    bluetooth.close()
+    print("Done")
 
 
 if __name__ == "__main__":

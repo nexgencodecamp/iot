@@ -14,6 +14,7 @@ __author__ = "Pete Januarius"
 __version__ = "0.1.0"
 __license__ = "MIT"
 
+import curses
 import serial
 import time
 import re
@@ -36,7 +37,6 @@ PWM_REVERSE_RIGHT_PIN = 6  # IN2 - Reverse Drive
 # Set initial duty cycle to 0 and frequency to 1000
 forwardLeft = PWMOutputDevice(PWM_FORWARD_LEFT_PIN, True, 0, 1000)
 reverseLeft = PWMOutputDevice(PWM_REVERSE_LEFT_PIN, True, 0, 1000)
-
 forwardRight = PWMOutputDevice(PWM_FORWARD_RIGHT_PIN, True, 0, 1000)
 reverseRight = PWMOutputDevice(PWM_REVERSE_RIGHT_PIN, True, 0, 1000)
 
@@ -45,8 +45,12 @@ button_delay = 0.2
 # Raspberry Pi
 port = "/dev/rfcomm1"
 
+MANUAL = 1
+AUTONOMOUS = 2
 
 # Handles keyboard input
+
+
 def getch():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -67,31 +71,31 @@ def allStop():
 
 
 def forwardDrive():
-    forwardLeft.value = 1.0
+    forwardLeft.value = 0.8
     reverseLeft.value = 0
-    forwardRight.value = 1.0
+    forwardRight.value = 0.8
     reverseRight.value = 0
 
 
 def reverseDrive():
     forwardLeft.value = 0
-    reverseLeft.value = 1.0
+    reverseLeft.value = 0.8
     forwardRight.value = 0
-    reverseRight.value = 1.0
+    reverseRight.value = 0.8
 
 
 def spinLeft():
     forwardLeft.value = 0
-    reverseLeft.value = 1.0
-    forwardRight.value = 1.0
+    reverseLeft.value = 0.8
+    forwardRight.value = 0.8
     reverseRight.value = 0
 
 
 def spinRight():
-    forwardLeft.value = 1.0
+    forwardLeft.value = 0.8
     reverseLeft.value = 0
     forwardRight.value = 0
-    reverseRight.value = 1.0
+    reverseRight.value = 0.8
 
 
 def forwardTurnLeft():
@@ -122,77 +126,115 @@ def reverseTurnRight():
     reverseRight.value = 0.2
 
 
-def main():
+def main(stdscr):
     print("Start")
 
     # Start communications with the bluetooth unit
-    bluetooth = serial.Serial(port, 9600)
-    print("Connected")
-    bluetooth.flushInput()
+    #bluetooth = serial.Serial(port, 9600)
+    # print("Connected")
+    # bluetooth.flushInput()
+
+    quit = False
+    mode = MANUAL
 
     while True:
-        char = getch()
-
-        # TODO - add a lastchar variable and check if char != lastchar
-
-        if (char == "q"):
+        if(quit == True):
             break
+        elif(mode == MANUAL):
+            print("Switching to manual mode...")
 
-        if (char == "p"):
-            print("Stop!")
-            allStop()
+            while True:
+                char = getch()
 
-        if (char == "a"):
-            print("Left pressed")
-            time.sleep(button_delay)
-            forwardTurnLeft()
+                # TODO - add a lastchar variable and check if char != lastchar
 
-        elif (char == "d"):
-            print("Right pressed")
-            time.sleep(button_delay)
-            forwardTurnRight()
+                if (char == "q"):
+                    quit = True
+                    break
 
-        elif (char == "w"):
-            print("Up pressed")
-            time.sleep(button_delay)
-            forwardDrive()
+                if (char == "p"):
+                    print("Stop!")
+                    allStop()
 
-        elif (char == "s"):
-            print("Down pressed")
-            time.sleep(button_delay)
-            reverseDrive()
+                if (char == "a"):
+                    print("Left pressed")
+                    time.sleep(button_delay)
+                    forwardTurnLeft()
 
-        elif (char == "1"):
-            print("Number 1 pressed")
-            time.sleep(button_delay)
-            reverseTurnLeft()
+                elif (char == "d"):
+                    print("Right pressed")
+                    time.sleep(button_delay)
+                    forwardTurnRight()
 
-        elif (char == "2"):
-            print("Number 2 pressed")
-            time.sleep(button_delay)
-            reverseTurnRight()
+                elif (char == "w"):
+                    print("Up pressed")
+                    time.sleep(button_delay)
+                    forwardDrive()
 
-        elif (char == "3"):
-            print("Number 3 pressed")
-            time.sleep(button_delay)
-            spinLeft()
+                elif (char == "s"):
+                    print("Down pressed")
+                    time.sleep(button_delay)
+                    reverseDrive()
 
-        elif (char == "4"):
-            print("Number 4 pressed")
-            time.sleep(button_delay)
-            spinRight()
+                elif (char == "k"):
+                    print("k pressed")
+                    time.sleep(button_delay)
+                    reverseTurnLeft()
 
-        # Read incoming bluetooth bytes
-        bytesToRead = bluetooth.inWaiting()
-        value = re.sub('[<>]', '', bluetooth.read(bytesToRead).decode())
-        print(value)
+                elif (char == "l"):
+                    print("l pressed")
+                    time.sleep(button_delay)
+                    reverseTurnRight()
 
-        sleep(0.25)
+                elif (char == "h"):
+                    print("h pressed")
+                    time.sleep(button_delay)
+                    spinLeft()
 
-    bluetooth.close()
+                elif (char == "j"):
+                    print("j pressed")
+                    time.sleep(button_delay)
+                    spinRight()
+                elif (char == "2"):
+                    print("2 pressed")
+                    time.sleep(button_delay)
+                    mode = AUTONOMOUS
+                    break
+                sleep(0.25)
+        elif(mode == AUTONOMOUS):
+
+            # Read incoming bluetooth bytes
+            # bytesToRead = bluetooth.inWaiting()
+            # value = re.sub('[<>]', '', bluetooth.read(bytesToRead).decode())
+            # print(value)
+
+            while(True):
+                print("Switching to autonomous mode...")
+                # NOTE: stdscr.getchh() will get ASCII values so
+                # a = 97, q = 113, 1 = 49
+                c = stdscr.getch()
+                print(c)
+
+                if (c == 122):
+                    # print numeric value
+                    stdscr.addstr(str(c) + ' ')
+                    stdscr.refresh()
+                    # return curser to start position
+                    stdscr.move(0, 0)
+                elif(c == 113):
+                    quit = True
+                    break
+                elif(c == 49):
+                    mode = MANUAL
+                    break
+
+                print("sleeping")
+                sleep(0.25)
+
+    # bluetooth.close()
     print("Done")
 
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
-    main()
+    curses.wrapper(main)
